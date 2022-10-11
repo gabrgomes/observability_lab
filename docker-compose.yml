@@ -4,15 +4,16 @@ services:
     profiles:
       - backend
       - all
-    image: grafana/grafana
+    image: grafana/grafana-oss
     container_name: grafana
     restart: always
     ports:
       - 3000:3000
     volumes:
-      - ./docker-volumes/grafana:/var/lib/grafana
+      - grafana-data:/var/lib/grafana
       - ./grafana/dashboard:/var/lib/grafana/dashboards
       - ./grafana/provisioning:/etc/grafana/provisioning
+    user: "472"
     networks:
       - grafana-net
     depends_on:
@@ -28,7 +29,9 @@ services:
       - 9090:9090
     volumes:
       - ./prometheus:/etc/prometheus
-      - ./docker-volumes/prometheus:/prometheus
+      # - ./docker-volumes/prometheus:/prometheus
+      - prometheus-data:/prometheus/data
+    user: "65534"
     networks:
       - prometheus-net
     command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yaml
@@ -208,5 +211,4 @@ networks:
 
 volumes:
   grafana-data:
-  prometheus-data: 
-
+  prometheus-data:
